@@ -7,6 +7,7 @@ int main(int argc, char **argv)
 
     if (!parse_args(argc, argv, &data))
         return (1);
+    signal(SIGPIPE, SIG_IGN);
     if (!init_data(&data))
     {
         fprintf(stderr, "error: allocation failed\n");
