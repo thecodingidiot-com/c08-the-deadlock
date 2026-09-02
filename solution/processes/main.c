@@ -51,6 +51,27 @@ static sem_t    *open_print(pid_t ppid, int create)
     return (s);
 }
 
+static sem_t    *open_death_gate(pid_t ppid, int create)
+{
+    char    name[64];
+    sem_t   *s;
+
+    fork_name(name, ppid, "death", 0);
+    if (create)
+    {
+        sem_unlink(name);
+        s = sem_open(name, O_CREAT | O_EXCL, 0644, 1);
+    }
+    else
+        s = sem_open(name, 0);
+    if (s == SEM_FAILED)
+    {
+        perror("sem_open");
+        exit(1);
+    }
+    return (s);
+}
+
 static pid_t    spawn_child(t_ctx const *base, int id)
 {
     t_ctx   ctx;
@@ -71,6 +92,7 @@ static pid_t    spawn_child(t_ctx const *base, int id)
         ctx.left_fork = open_fork(ctx.parent_pid, id - 1, 0);
         ctx.right_fork = open_fork(ctx.parent_pid, id % ctx.num_philos, 0);
         ctx.print_sem = open_print(ctx.parent_pid, 0);
+        ctx.death_gate = open_death_gate(ctx.parent_pid, 0);
         exit(run_child(&ctx));
     }
     return (pid);
@@ -111,6 +133,8 @@ static void cleanup_names(pid_t ppid, int num_philos)
     }
     fork_name(name, ppid, "print", 0);
     sem_unlink(name);
+    fork_name(name, ppid, "death", 0);
+    sem_unlink(name);
 }
 
 int main(int argc, char **argv)
@@ -137,6 +161,7 @@ int main(int argc, char **argv)
     while (i < base.num_philos)
         open_fork(base.parent_pid, i++, 1);
     open_print(base.parent_pid, 1);
+    open_death_gate(base.parent_pid, 1);
     pids = malloc(sizeof(pid_t) * base.num_philos);
     i = 0;
     while (i < base.num_philos)

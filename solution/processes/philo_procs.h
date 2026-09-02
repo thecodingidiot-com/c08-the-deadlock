@@ -25,6 +25,7 @@ typedef struct s_ctx
     sem_t           *left_fork;
     sem_t           *right_fork;
     sem_t           *print_sem;
+    sem_t           *death_gate;
     pthread_mutex_t meal_lock;
     long            last_meal;
     int             meals_eaten;

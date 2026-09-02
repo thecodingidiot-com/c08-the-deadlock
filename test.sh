@@ -11,6 +11,10 @@
 #   - the threaded solution is race-free under helgrind
 #   - the process solution leaves no orphaned children or leaked named
 #     semaphores behind after SIGTERM (Ctrl+C-style external stop)
+#   - under timing tight enough that multiple philosophers starve almost
+#     simultaneously, the process solution still reports exactly one death
+#     line, never more (a real race found and fixed: independent watcher
+#     threads across separate processes can otherwise all "win" at once)
 #
 # Copy this file into your working directory (next to your own threads/ and
 # processes/ solutions), then run:
@@ -127,6 +131,24 @@ if echo "$p_die" | grep -qE "^[0-9]+ 1 died$"; then
 else
     fail "processes: single philosopher dies of starvation" "got: $p_die"
 fi
+
+# ── simultaneous starvation: exactly one death line, never more ────────────────
+
+echo
+echo "Running simultaneous-starvation check (processes, x5 runs)..."
+p_single_death_ok=1
+for _ in 1 2 3 4 5; do
+    p_race_out=$("$PROCS_BIN" 3 200 300 100)
+    p_death_lines=$(echo "$p_race_out" | grep -cE "^[0-9]+ [0-9]+ died$")
+    if [[ "$p_death_lines" -ne 1 ]]; then
+        p_single_death_ok=0
+        fail "processes: exactly one death line under simultaneous starvation" \
+            "got $p_death_lines death lines: $(echo "$p_race_out" | grep died)"
+        break
+    fi
+done
+[[ "$p_single_death_ok" -eq 1 ]] && \
+    pass "processes: exactly one death line under simultaneous starvation (5 runs)"
 
 # ── must-eat-count: clean finish, exact counts ─────────────────────────────────
 
