@@ -13,10 +13,14 @@ static void *watcher(void *arg)
         pthread_mutex_unlock(&ctx->meal_lock);
         if (since > ctx->time_to_die)
         {
-            sem_wait(ctx->print_sem);
-            printf("%ld %d died\n", get_time_ms() - ctx->start_time, ctx->id);
-            fflush(stdout);
-            sem_post(ctx->print_sem);
+            if (sem_trywait(ctx->death_gate) == 0)
+            {
+                sem_wait(ctx->print_sem);
+                printf("%ld %d died\n", get_time_ms() - ctx->start_time,
+                    ctx->id);
+                fflush(stdout);
+                sem_post(ctx->print_sem);
+            }
             _exit(1);
         }
         usleep(1000);
