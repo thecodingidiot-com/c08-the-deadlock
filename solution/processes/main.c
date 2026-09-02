@@ -125,6 +125,7 @@ int main(int argc, char **argv)
 
     if (!parse_args(argc, argv, &base))
         return (1);
+    signal(SIGPIPE, SIG_IGN);
     sa.sa_handler = handle_shutdown;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
