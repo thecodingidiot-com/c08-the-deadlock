@@ -6,15 +6,12 @@ static void *watcher(void *arg)
     long    since;
 
     ctx = (t_ctx *)arg;
-    while (1)
-    {
+    while (1) {
         pthread_mutex_lock(&ctx->meal_lock);
         since = get_time_ms() - ctx->last_meal;
         pthread_mutex_unlock(&ctx->meal_lock);
-        if (since > ctx->time_to_die)
-        {
-            if (sem_trywait(ctx->death_gate) == 0)
-            {
+        if (since > ctx->time_to_die) {
+            if (sem_trywait(ctx->death_gate) == 0) {
                 sem_wait(ctx->print_sem);
                 printf("%ld %d died\n", get_time_ms() - ctx->start_time,
                     ctx->id);
@@ -30,8 +27,7 @@ static void *watcher(void *arg)
 
 static void take_forks(t_ctx *ctx, int left, int right)
 {
-    if (left < right)
-    {
+    if (left < right) {
         sem_wait(ctx->left_fork);
         log_state(ctx, "has taken a fork");
         sem_wait(ctx->right_fork);
@@ -53,8 +49,7 @@ static void eat(t_ctx *ctx)
 
     left = ctx->id - 1;
     right = ctx->id % ctx->num_philos;
-    if (left == right)
-    {
+    if (left == right) {
         sem_wait(ctx->left_fork);
         log_state(ctx, "has taken a fork");
         while (1)
@@ -83,8 +78,7 @@ int     run_child(t_ctx *ctx)
     pthread_detach(watch);
     if (ctx->id % 2 == 0)
         usleep(1000);
-    while (1)
-    {
+    while (1) {
         eat(ctx);
         log_state(ctx, "is sleeping");
         usleep(ctx->time_to_sleep * 1000);

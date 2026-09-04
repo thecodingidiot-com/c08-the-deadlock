@@ -7,8 +7,7 @@ static long ft_atol(char const *s)
 
     n = 0;
     i = 0;
-    while (s[i] >= '0' && s[i] <= '9')
-    {
+    while (s[i] >= '0' && s[i] <= '9') {
         n = n * 10 + (s[i] - '0');
         i++;
     }
@@ -22,8 +21,7 @@ static int all_digits(char const *s)
     if (!s[0])
         return (0);
     i = 0;
-    while (s[i])
-    {
+    while (s[i]) {
         if (s[i] < '0' || s[i] > '9')
             return (0);
         i++;
@@ -33,8 +31,7 @@ static int all_digits(char const *s)
 
 int     parse_args(int argc, char **argv, t_ctx *ctx)
 {
-    if (argc != 5 && argc != 6)
-    {
+    if (argc != 5 && argc != 6) {
         fprintf(stderr,
             "usage: %s num_philos time_to_die time_to_eat "
             "time_to_sleep [must_eat_count]\n", argv[0]);
@@ -55,8 +52,7 @@ int     parse_args(int argc, char **argv, t_ctx *ctx)
         ctx->must_eat_count = (int)ft_atol(argv[5]);
     else
         ctx->must_eat_count = -1;
-    if (ctx->num_philos < 1)
-    {
+    if (ctx->num_philos < 1) {
         fprintf(stderr, "error: num_philos must be at least 1\n");
         return (0);
     }

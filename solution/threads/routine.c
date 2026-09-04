@@ -7,14 +7,12 @@ static void take_forks(t_philo *philo)
 
     left = philo->id - 1;
     right = philo->id % philo->data->num_philos;
-    if (left == right)
-    {
+    if (left == right) {
         pthread_mutex_lock(&philo->data->forks[left]);
         print_state(philo, "has taken a fork");
         return ;
     }
-    if (left < right)
-    {
+    if (left < right) {
         pthread_mutex_lock(&philo->data->forks[left]);
         print_state(philo, "has taken a fork");
         pthread_mutex_lock(&philo->data->forks[right]);
@@ -44,8 +42,7 @@ static void put_forks(t_philo *philo)
 static void eat(t_philo *philo)
 {
     take_forks(philo);
-    if (philo->data->num_philos == 1)
-    {
+    if (philo->data->num_philos == 1) {
         /* Only one fork exists. It is held, never released, and a
          * second fork never arrives — the philosopher starves holding
          * it, exactly like the textbook edge case says. */
@@ -70,8 +67,7 @@ void    *philo_routine(void *arg)
     philo = (t_philo *)arg;
     if (philo->id % 2 == 0)
         usleep(1000);
-    while (!simulation_stopped(philo->data))
-    {
+    while (!simulation_stopped(philo->data)) {
         eat(philo);
         if (simulation_stopped(philo->data))
             break ;
