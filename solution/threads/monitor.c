@@ -6,13 +6,11 @@ static int check_death(t_data *data)
     long    since;
 
     i = 0;
-    while (i < data->num_philos)
-    {
+    while (i < data->num_philos) {
         pthread_mutex_lock(&data->philos[i].meal_lock);
         since = get_time_ms() - data->philos[i].last_meal;
         pthread_mutex_unlock(&data->philos[i].meal_lock);
-        if (since > data->time_to_die)
-        {
+        if (since > data->time_to_die) {
             pthread_mutex_lock(&data->print_lock);
             printf("%ld %d died\n", get_time_ms() - data->start_time,
                 data->philos[i].id);
@@ -33,11 +31,9 @@ static int all_fed(t_data *data)
     if (data->must_eat_count < 0)
         return (0);
     i = 0;
-    while (i < data->num_philos)
-    {
+    while (i < data->num_philos) {
         pthread_mutex_lock(&data->philos[i].meal_lock);
-        if (data->philos[i].meals_eaten < data->must_eat_count)
-        {
+        if (data->philos[i].meals_eaten < data->must_eat_count) {
             pthread_mutex_unlock(&data->philos[i].meal_lock);
             return (0);
         }
@@ -49,12 +45,10 @@ static int all_fed(t_data *data)
 
 void    run_monitor(t_data *data)
 {
-    while (!simulation_stopped(data))
-    {
+    while (!simulation_stopped(data)) {
         if (check_death(data))
             return ;
-        if (all_fed(data))
-        {
+        if (all_fed(data)) {
             stop_simulation(data);
             return ;
         }

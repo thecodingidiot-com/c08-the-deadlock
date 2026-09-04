@@ -28,8 +28,7 @@ void    stop_simulation(t_data *data)
 void    print_state(t_philo *philo, char const *msg)
 {
     pthread_mutex_lock(&philo->data->print_lock);
-    if (!simulation_stopped(philo->data))
-    {
+    if (!simulation_stopped(philo->data)) {
         printf("%ld %d %s\n", get_time_ms() - philo->data->start_time,
             philo->id, msg);
         fflush(stdout);
