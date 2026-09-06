@@ -18,8 +18,7 @@ static void take_forks(t_philo *philo)
         pthread_mutex_lock(&philo->data->forks[right]);
         print_state(philo, "has taken a fork");
     }
-    else
-    {
+    else {
         pthread_mutex_lock(&philo->data->forks[right]);
         print_state(philo, "has taken a fork");
         pthread_mutex_lock(&philo->data->forks[left]);
