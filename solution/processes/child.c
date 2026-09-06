@@ -33,8 +33,7 @@ static void take_forks(t_ctx *ctx, int left, int right)
         sem_wait(ctx->right_fork);
         log_state(ctx, "has taken a fork");
     }
-    else
-    {
+    else {
         sem_wait(ctx->right_fork);
         log_state(ctx, "has taken a fork");
         sem_wait(ctx->left_fork);
