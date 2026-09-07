@@ -1,19 +1,26 @@
 NAME        = philo_procs
 CC          = gcc
-CFLAGS      = -Wall -Wextra -g -std=c99 -D_GNU_SOURCE -pthread
+CFLAGS      = -Wall -Wextra -Werror -std=c99 -D_GNU_SOURCE -pthread
+BUILD       = -g -O0
+RELEASE     = -O2
 
 SRCS        = main.c args.c child.c utils.c
 OBJS        = $(SRCS:.c=.o)
 
-.PHONY: all clean fclean re
+.PHONY: all release clean fclean re
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) -pthread -o $(NAME)
+	$(CC) $(BUILD) $(OBJS) -pthread -o $(NAME)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(BUILD) -c $< -o $@
+
+release:
+	@$(MAKE) --no-print-directory fclean
+	@$(MAKE) --no-print-directory BUILD="$(RELEASE)"
+	strip $(NAME)
 
 clean:
 	rm -f $(OBJS)
